@@ -31,6 +31,7 @@ import ProfilePopulator from 'src/common/helper/profileUpdate/profile-update';
 import axios from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { UpdateUserInUserServiceDto } from './dto/user-update-userService.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -1170,6 +1171,60 @@ export class UserService {
       }
     }
   }
+
+  // New function to update user xref
+  async updateUserXref(where: Partial<UsersXref>, fieldsToUpdate: Partial<UsersXref>) {
+    const result = await this.usersXrefRepository.update(where, fieldsToUpdate);
+    if (!result.affected || result.affected === 0) {
+      throw new ErrorResponse({
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: 'Unable to update user xref',
+      });
+    }
+    return result;
+  }
+
+  async updateInUserService(userId: string, body: UpdateUserInUserServiceDto, authorization, tenantId) {
+    try {
+      const userServiceUrl = this.configService.get<string>('USER_SERVICE_URL');
+
+      const payload = {
+        userId: userId,
+        userData: body.userData,
+        customFields: body.customFields || [],
+      };
+
+      const response = await axios.patch(
+        `${userServiceUrl}/user/v1/update/${userId}`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            tenantid: tenantId,
+            Authorization: authorization
+          },
+        },
+      );
+      // Extract the updated userId from the response, fallback to the original userId if not present
+      // const responseData = response.data;
+      // const updatedUserId = responseData?.result?.userData?.userId || userId;
+
+      // // Use the new updateUserXref function
+      // await this.updateUserXref(updatedUserId);
+
+      return new SuccessResponse({
+        statusCode: HttpStatus.OK,
+        message: 'User updated in user service successfully',
+        data: response.data,
+      });
+    } catch (error) {
+      return new ErrorResponse({
+        statusCode: error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.response?.data?.message || 'Failed to update user in user service',
+      });
+    }
+  }
+
   private async verifyVcWithApi(vcData: any): Promise<{ success: boolean; message?: string; errors?: any[] }> {
     try {
       const verificationPayload = {
