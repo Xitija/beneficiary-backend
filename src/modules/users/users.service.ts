@@ -1172,25 +1172,14 @@ export class UserService {
     }
   }
 
-  // New function to update user xref
-  async updateUserXref(where: Partial<UsersXref>, fieldsToUpdate: Partial<UsersXref>) {
-    const result = await this.usersXrefRepository.update(where, fieldsToUpdate);
-    if (!result.affected || result.affected === 0) {
-      throw new ErrorResponse({
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        errorMessage: 'Unable to update user xref',
-      });
-    }
-    return result;
-  }
 
   async updateInUserService(userId: string, body: UpdateUserInUserServiceDto, authorization, tenantId) {
     try {
       const userServiceUrl = this.configService.get<string>('USER_SERVICE_URL');
-
+      const { customFields, ...userData } = body;
       const payload = {
         userId: userId,
-        userData: body.userData,
+        userData,
         customFields: body.customFields || [],
       };
 
@@ -1209,8 +1198,8 @@ export class UserService {
       // const responseData = response.data;
       // const updatedUserId = responseData?.result?.userData?.userId || userId;
 
-      // // Use the new updateUserXref function
-      // await this.updateUserXref(updatedUserId);
+      // // // Use the new updateUserXref function
+      // await this.createUserXref(updatedUserId);
 
       return new SuccessResponse({
         statusCode: HttpStatus.OK,

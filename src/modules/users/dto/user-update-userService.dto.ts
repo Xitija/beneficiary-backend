@@ -12,7 +12,7 @@ export class CustomFieldInUserServiceDto {
   value: string;
 }
 
-export class UserDataInUserServiceDto {
+export class UpdateUserInUserServiceDto {
   @ApiProperty()
   @IsString()
   username: string;
@@ -27,6 +27,7 @@ export class UserDataInUserServiceDto {
   middleName?: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   lastName: string;
 
@@ -35,75 +36,67 @@ export class UserDataInUserServiceDto {
   gender: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   role: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   dob: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   email: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   district: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   state: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   address: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   pincode: string;
 
-  @ApiProperty()
-  @IsString()
-  createdAt: string;
 
-  @ApiProperty()
-  @IsString()
-  updatedAt: string;
 
-  @ApiProperty()
-  @IsString()
-  createdBy: string;
 
   @ApiProperty()
   @IsString()
   updatedBy: string;
 
-  @ApiProperty()
-  @IsString()
-  tenantId: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   status: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   reason: string;
 
   @ApiProperty()
+  @IsOptional()
   @IsString()
   deviceId: string;
 
   @ApiProperty({ enum: ['add', 'update', 'delete'] })
+  @IsOptional()
   @IsEnum(['add', 'update', 'delete'])
-  action: string;
-}
-
-export class UpdateUserInUserServiceDto {
-  @ApiProperty({ type: UserDataInUserServiceDto })
-  @ValidateNested()
-  @Type(() => UserDataInUserServiceDto)
-  userData: UserDataInUserServiceDto;
+  action?: string;
 
   @ApiProperty({ type: [CustomFieldInUserServiceDto], required: false })
   @IsArray()
