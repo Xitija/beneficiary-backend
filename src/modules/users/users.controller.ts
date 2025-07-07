@@ -31,6 +31,7 @@ import { CreateUserApplicationDto } from './dto/create-user-application-dto';
 import { AuthGuard } from '@modules/auth/auth.guard';
 import { Request } from 'express';
 import { FetchVcUrlDto } from './dto/fetch-vc-url.dto';
+import { UpdateUserInUserServiceDto } from './dto/user-update-userService.dto';
 
 @ApiTags('users')
 @Controller('users')
@@ -119,7 +120,8 @@ export class UserController {
   @Post('/user_info')
   @ApiBasicAuth('access-token')
   async createUSerInfo(@Body() createUserInfoDto: CreateUserInfoDto) {
-    return await this.userService.createUserInfo(createUserInfoDto);
+    // return await this.userService.createUserInfo(createUserInfoDto);
+    return
   }
 
   @UseGuards(AuthGuard)
@@ -129,7 +131,7 @@ export class UserController {
     @Param('user_id') user_id: string,
     @Body() updateUserInfoDto: CreateUserInfoDto,
   ) {
-    return await this.userService.updateUserInfo(user_id, updateUserInfoDto);
+    // return await this.userService.updateUserInfo(user_id, updateUserInfoDto);
   }
 
   @UseGuards(AuthGuard)
@@ -244,5 +246,21 @@ export class UserController {
       tenantId,
       authorization,
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Put('/update-in-user-service/:userId')
+  @ApiResponse({ status: 200, description: 'User updated in user service successfully.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 503, description: 'User service unavailable.' })
+  public async updateInUserService(
+    @Param('userId') userId: string,
+    @Body() body: UpdateUserInUserServiceDto,
+    @Req() req: any
+  ) {
+    const tenantId = req?.headers?.tenantid as string;
+    const authorization = req.headers['authorization'];
+    return await this.userService.updateInUserService(userId, body, authorization,tenantId);
   }
 }

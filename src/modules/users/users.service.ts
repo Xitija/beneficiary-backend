@@ -9,12 +9,12 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository, QueryRunner } from 'typeorm';
-import { User } from '../../entity/user.entity';
+// import { User } from '../../entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateUserDocDTO } from './dto/user_docs.dto';
 import { UserDoc } from '@entities/user_docs.entity';
 import { CreateUserInfoDto } from './dto/create-user-info.dto';
-import { UserInfo } from '@entities/user_info.entity';
+// import { UserInfo } from '@entities/user_info.entity';
 import { EncryptionService } from 'src/common/helper/encryptionService';
 import { Consent } from '@entities/consent.entity';
 import { CreateConsentDto } from './dto/create-consent.dto';
@@ -31,6 +31,7 @@ import ProfilePopulator from 'src/common/helper/profileUpdate/profile-update';
 import axios from 'axios';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { UpdateUserInUserServiceDto } from './dto/user-update-userService.dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -38,8 +39,8 @@ export class UserService {
     // private readonly userRepository: Repository<User>,
     @InjectRepository(UserDoc)
     private readonly userDocsRepository: Repository<UserDoc>,
-    @InjectRepository(UserInfo)
-    private readonly userInfoRepository: Repository<UserInfo>,
+    // @InjectRepository(UserInfo)
+    // private readonly userInfoRepository: Repository<UserInfo>,
     private readonly encryptionService: EncryptionService,
     @InjectRepository(Consent)
     private readonly consentRepository: Repository<Consent>,
@@ -98,22 +99,23 @@ export class UserService {
       // await this.userRepository.save(existingUser);
 
       // Check for existing user info in userInfoRepository
-      const existingUserInfo = await this.userInfoRepository.findOne({
-        where: { user_id: userId },
-      });
+      // const existingUserInfo = await this.userInfoRepository.findOne({
+      //   where: { user_id: userId },
+      // });
+      const existingUserInfo = {}
 
-      if (existingUserInfo) {
+      // if (existingUserInfo) {
         // Update user info if it exists
-        Object.assign(existingUserInfo, userInfo);
-        await this.userInfoRepository.save(existingUserInfo);
-      } else if (userInfo) {
+        // Object.assign(existingUserInfo, userInfo);
+        // await this.userInfoRepository.save(existingUserInfo);
+      // } else if (userInfo) {
         // Create a new user info if it doesn't exist and userInfo is provided
-        const newUserInfo = this.userInfoRepository.create({
-          user_id: userId,
-          ...userInfo,
-        });
-        await this.userInfoRepository.save(newUserInfo);
-      }
+        // const newUserInfo = this.userInfoRepository.create({
+        //   user_id: userId,
+        //   ...userInfo,
+        // });
+        // await this.userInfoRepository.save(newUserInfo);
+      // }
 
       return new SuccessResponse({
         statusCode: HttpStatus.OK,
@@ -230,54 +232,55 @@ export class UserService {
   //   return user;
   // }
 
-  async findOneUserInfo(
-    user_id: string,
-    decryptData: boolean,
-  ): Promise<UserInfo> {
-    const userInfo = await this.userInfoRepository.findOne({
-      where: { user_id },
-    });
+  // async findOneUserInfo(
+  //   user_id: string,
+  //   decryptData: boolean,
+  // ): Promise<UserInfo> {
+    // const userInfo = await this.userInfoRepository.findOne({
+    //   where: { user_id },
+    // });
+  //   const userInfo = {}
 
-    type EncryptedStringFields = 'aadhaar' | 'udid' | 'bankAccountNumber';
+  //   type EncryptedStringFields = 'aadhaar' | 'udid' | 'bankAccountNumber';
 
-    if (userInfo && decryptData) {
-      const encryptedFields: EncryptedStringFields[] = [
-        'aadhaar',
-        'udid',
-        'bankAccountNumber',
-      ];
+  //   if (userInfo && decryptData) {
+  //     const encryptedFields: EncryptedStringFields[] = [
+  //       'aadhaar',
+  //       'udid',
+  //       'bankAccountNumber',
+  //     ];
 
-      encryptedFields.forEach((field) => {
-        const value = userInfo[field];
-        if (typeof value === 'string' && value.includes(':')) {
-          const decrypted = this.encryptionService.decrypt(value);
-          userInfo[field] = decrypted as string;
-        }
-      });
+  //     encryptedFields.forEach((field) => {
+  //       const value = userInfo[field];
+  //       if (typeof value === 'string' && value.includes(':')) {
+  //         const decrypted = this.encryptionService.decrypt(value);
+  //         userInfo[field] = decrypted as string;
+  //       }
+  //     });
 
-      type EncryptedStringFields = 'aadhaar' | 'udid' | 'bankAccountNumber';
+  //     type EncryptedStringFields = 'aadhaar' | 'udid' | 'bankAccountNumber';
 
-      if (userInfo && decryptData) {
-        const encryptedFields: EncryptedStringFields[] = [
-          'aadhaar',
-          'udid',
-          'bankAccountNumber',
-        ];
+  //     if (userInfo && decryptData) {
+  //       const encryptedFields: EncryptedStringFields[] = [
+  //         'aadhaar',
+  //         'udid',
+  //         'bankAccountNumber',
+  //       ];
 
-        encryptedFields.forEach((field) => {
-          const value = userInfo[field];
-          if (typeof value === 'string' && value.includes(':')) {
-            const decrypted = this.encryptionService.decrypt(value);
-            userInfo[field] = decrypted as string;
-          }
-        });
-      }
+  //       encryptedFields.forEach((field) => {
+  //         const value = userInfo[field];
+  //         if (typeof value === 'string' && value.includes(':')) {
+  //           const decrypted = this.encryptionService.decrypt(value);
+  //           userInfo[field] = decrypted as string;
+  //         }
+  //       });
+  //     }
 
-      return userInfo;
-    }
+  //     return userInfo;
+  //   }
 
-    return userInfo;
-  }
+  //   return userInfo;
+  // }
 
   async findUserDocs(user_id: string, decryptData: boolean) {
     const userDocs = await this.userDocsRepository.find({ where: { user_id } });
@@ -686,60 +689,61 @@ export class UserService {
       return null;
     }
   }
-  // User info
-  async createUserInfo(
-    createUserInfoDto: CreateUserInfoDto,
-  ): Promise<UserInfo | null> {
-    try {
-      // Ensure you await the result of registerUserWithUsername
-      const userData = await this.registerUserWithUsername(createUserInfoDto);
+  // // User info
+  // async createUserInfo(
+  //   createUserInfoDto: CreateUserInfoDto,
+  // ): Promise<UserInfo | null> {
+  //   try {
+  //     // Ensure you await the result of registerUserWithUsername
+  //     const userData = await this.registerUserWithUsername(createUserInfoDto);
 
-      // Check if userData and userData.user exist
-      // if (userData?.user?.user_id) {
-      //   // Assign the user_id from userData to createUserInfoDto
-      //   createUserInfoDto.user_id = ""
-      //   // userData.user.user_id;
+  //     // Check if userData and userData.user exist
+  //     // if (userData?.user?.user_id) {
+  //     //   // Assign the user_id from userData to createUserInfoDto
+  //     //   createUserInfoDto.user_id = ""
+  //     //   // userData.user.user_id;
 
-      //   // Encrypt the aadhaar before saving
-      //   const encrypted = this.encryptionService.encrypt(
-      //     createUserInfoDto.aadhaar,
-      //   );
-      //   createUserInfoDto.aadhaar = encrypted;
+  //     //   // Encrypt the aadhaar before saving
+  //     //   const encrypted = this.encryptionService.encrypt(
+  //     //     createUserInfoDto.aadhaar,
+  //     //   );
+  //     //   createUserInfoDto.aadhaar = encrypted;
 
-      //   // Create and save the new UserInfo record
-      //   const userInfo = this.userInfoRepository.create(createUserInfoDto);
-      //   return await this.userInfoRepository.save(userInfo);
-      // } else {
-      //   // Handle the case where userData or userData.user is null
-      //   console.error('User registration failed or returned invalid data.');
-      //   return null;
-      // }
-      return null;
-    } catch (error) {
-      console.error('Error while creating user info:', error);
-      throw new Error('Could not create user info');
-    }
-  }
+  //     //   // Create and save the new UserInfo record
+  //     //   const userInfo = this.userInfoRepository.create(createUserInfoDto);
+  //     //   return await this.userInfoRepository.save(userInfo);
+  //     // } else {
+  //     //   // Handle the case where userData or userData.user is null
+  //     //   console.error('User registration failed or returned invalid data.');
+  //     //   return null;
+  //     // }
+  //     return null;
+  //   } catch (error) {
+  //     console.error('Error while creating user info:', error);
+  //     throw new Error('Could not create user info');
+  //   }
+  // }
 
-  async updateUserInfo(
-    user_id: string,
-    updateUserInfoDto: CreateUserInfoDto,
-  ): Promise<UserInfo> {
-    const userInfo = await this.userInfoRepository.findOne({
-      where: { user_id },
-    });
+  // async updateUserInfo(
+  //   user_id: string,
+  //   updateUserInfoDto: CreateUserInfoDto,
+  // ): Promise<UserInfo> {
+  //   const userInfo = {}
+  //   // await this.userInfoRepository.findOne({
+  //   //   where: { user_id },
+  //   // });
 
-    if (updateUserInfoDto?.aadhaar) {
-      const encrypted = this.encryptionService.encrypt(
-        updateUserInfoDto?.aadhaar,
-      );
+  //   if (updateUserInfoDto?.aadhaar) {
+  //     const encrypted = this.encryptionService.encrypt(
+  //       updateUserInfoDto?.aadhaar,
+  //     );
 
-      updateUserInfoDto.aadhaar = encrypted;
-    }
-    Object.assign(userInfo, updateUserInfoDto);
-    console.log('userInfo--->>', userInfo);
-    return this.userInfoRepository.save(userInfo);
-  }
+  //     updateUserInfoDto.aadhaar = encrypted;
+  //   }
+  //   Object.assign(userInfo, updateUserInfoDto);
+  //   console.log('userInfo--->>', userInfo);
+  //   // return this.userInfoRepository.save(userInfo);
+  // }
   // Create a new consent record
   async createUserConsent(
     createConsentDto: CreateConsentDto,
@@ -941,33 +945,33 @@ export class UserService {
     }
   }
 
-  async resetInUsers(
-    field: string,
-    existingDoc: UserDoc,
-    queryRunner: QueryRunner,
-  ) {
-    await queryRunner.manager
-      .getRepository(User)
-      .createQueryBuilder()
-      .update(User)
-      .set({ [field]: () => 'NULL' }) // Use a raw SQL expression for setting NULL.
-      .where('user_id = :id', { id: existingDoc.user_id })
-      .execute();
-  }
+  // async resetInUsers(
+  //   field: string,
+  //   existingDoc: UserDoc,
+  //   queryRunner: QueryRunner,
+  // ) {
+  //   await queryRunner.manager
+  //     .getRepository(User)
+  //     .createQueryBuilder()
+  //     .update(User)
+  //     .set({ [field]: () => 'NULL' }) // Use a raw SQL expression for setting NULL.
+  //     .where('user_id = :id', { id: existingDoc.user_id })
+  //     .execute();
+  // }
 
-  async resetInUserInfo(
-    field: string,
-    existingDoc: UserDoc,
-    queryRunner: QueryRunner,
-  ) {
-    await queryRunner.manager
-      .getRepository(UserInfo)
-      .createQueryBuilder()
-      .update(UserInfo)
-      .set({ [field]: () => 'NULL' }) // Use a raw SQL expression for setting NULL.
-      .where('user_id = :id', { id: existingDoc.user_id })
-      .execute();
-  }
+  // async resetInUserInfo(
+  //   field: string,
+  //   existingDoc: UserDoc,
+  //   queryRunner: QueryRunner,
+  // ) {
+  //   await queryRunner.manager
+  //     .getRepository(UserInfo)
+  //     .createQueryBuilder()
+  //     // .update(UserInfo)
+  //     .set({ [field]: () => 'NULL' }) // Use a raw SQL expression for setting NULL.
+  //     .where('user_id = :id', { id: existingDoc.user_id })
+  //     .execute();
+  // }
 
   async resetField(existingDoc: UserDoc, queryRunner: QueryRunner) {
     const fieldsArray = {
@@ -981,11 +985,11 @@ export class UserService {
 
     const fields = fieldsArray[existingDoc.doc_subtype] ?? [];
 
-    for (const field of fields) {
-      if (field === 'middleName')
-        await this.resetInUsers(field, existingDoc, queryRunner);
-      else await this.resetInUserInfo(field, existingDoc, queryRunner);
-    }
+    // for (const field of fields) {
+    //   if (field === 'middleName')
+        // await this.resetInUsers(field, existingDoc, queryRunner);
+      // else await this.resetInUserInfo(field, existingDoc, queryRunner);
+    // }
   }
 
   async delete(req: any, doc_id: string) {
@@ -1170,6 +1174,49 @@ export class UserService {
       }
     }
   }
+
+
+  async updateInUserService(userId: string, body: UpdateUserInUserServiceDto, authorization, tenantId) {
+    try {
+      const userServiceUrl = this.configService.get<string>('USER_SERVICE_URL');
+      const { customFields, ...userData } = body;
+      const payload = {
+        userId: userId,
+        userData,
+        customFields: body.customFields || [],
+      };
+
+      const response = await axios.patch(
+        `${userServiceUrl}/user/v1/update/${userId}`,
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            tenantid: tenantId,
+            Authorization: authorization
+          },
+        },
+      );
+      // Extract the updated userId from the response, fallback to the original userId if not present
+      // const responseData = response.data;
+      // const updatedUserId = responseData?.result?.userData?.userId || userId;
+
+      // // // Use the new updateUserXref function
+      // await this.createUserXref(updatedUserId);
+
+      return new SuccessResponse({
+        statusCode: HttpStatus.OK,
+        message: 'User updated in user service successfully',
+        data: response.data,
+      });
+    } catch (error) {
+      return new ErrorResponse({
+        statusCode: error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        errorMessage: error.response?.data?.message || 'Failed to update user in user service',
+      });
+    }
+  }
+
   private async verifyVcWithApi(vcData: any): Promise<{ success: boolean; message?: string; errors?: any[] }> {
     try {
       const verificationPayload = {
