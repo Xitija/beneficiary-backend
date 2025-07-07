@@ -120,7 +120,8 @@ export class UserController {
   @Post('/user_info')
   @ApiBasicAuth('access-token')
   async createUSerInfo(@Body() createUserInfoDto: CreateUserInfoDto) {
-    return await this.userService.createUserInfo(createUserInfoDto);
+    // return await this.userService.createUserInfo(createUserInfoDto);
+    return
   }
 
   @UseGuards(AuthGuard)
@@ -130,7 +131,7 @@ export class UserController {
     @Param('user_id') user_id: string,
     @Body() updateUserInfoDto: CreateUserInfoDto,
   ) {
-    return await this.userService.updateUserInfo(user_id, updateUserInfoDto);
+    // return await this.userService.updateUserInfo(user_id, updateUserInfoDto);
   }
 
   @UseGuards(AuthGuard)

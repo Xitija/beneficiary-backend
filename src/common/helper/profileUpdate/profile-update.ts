@@ -1,7 +1,7 @@
 // import { User } from '@entities/user.entity';
 import { UsersXref } from '@entities/users_xref.entity';
 import { UserDoc } from '@entities/user_docs.entity';
-import { UserInfo } from '@entities/user_info.entity';
+// import { UserInfo } from '@entities/user_info.entity';
 import { Injectable, Logger } from '@nestjs/common';
 import { readFile } from 'fs/promises';
 import * as path from 'path';
@@ -18,8 +18,8 @@ export default class ProfilePopulator {
     @InjectRepository(UsersXref) private readonly usersXrefRepository: Repository<UsersXref>,
     @InjectRepository(UserDoc)
     private readonly userDocRepository: Repository<UserDoc>,
-    @InjectRepository(UserInfo)
-    private readonly userInfoRepository: Repository<UserInfo>,
+    // @InjectRepository(UserInfo)
+    // private readonly userInfoRepository: Repository<UserInfo>,
     private readonly encryptionService: EncryptionService,
     private readonly keycloakService: KeycloakService,
   ) {}
@@ -333,83 +333,83 @@ export default class ProfilePopulator {
   }
 
   // Handle rows from 'user_info' table in database
-  private async handleUserInfo(user: any, userInfo: any) {
-    const queryRunner =
-      this.userInfoRepository.manager.connection.createQueryRunner();
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-    try {
-      const userRows = await queryRunner.manager.find(UserInfo, {
-        where: {
-          user_id: user.user_id,
-        },
-      });
+  // private async handleUserInfo(user: any, userInfo: any) {
+  //   const queryRunner =
+  //     this.userInfoRepository.manager.connection.createQueryRunner();
+  //   await queryRunner.connect();
+  //   await queryRunner.startTransaction();
+  //   try {
+  //     const userRows = await queryRunner.manager.find(UserInfo, {
+  //       where: {
+  //         user_id: user.user_id,
+  //       },
+  //     });
 
-      let row: UserInfo;
-      ///update added filleds
-      if (userRows.length === 0) {
-        row = this.userInfoRepository.create({
-          user_id: user.user_id,
-          fatherName: userInfo.fatherName,
-          gender: userInfo.gender,
-          caste: userInfo.caste,
-          annualIncome: userInfo.annualIncome,
-          class: userInfo.class,
-          aadhaar: userInfo?.aadhaar?.toString(),
-          studentType: userInfo.studentType,
-          previousYearMarks: userInfo?.previousYearMarks?.toString(),
-          dob: userInfo?.dob?.toString(),
-          state: userInfo.state,
-          udid: userInfo?.udid?.toString(),
-          disabilityType: userInfo.disabilityType,
-          disabilityRange: userInfo.disabilityRange,
-          bankAccountHolderName: userInfo.bankAccountHolderName,
-          bankAccountNumber: userInfo.bankAccountNumber,
-          bankIfscCode: userInfo.bankIfscCode,
-          bankName: userInfo.bankName,
-          bankAddress: userInfo.bankAddress,
-          branchCode: userInfo.branchCode,
-          nspOtr: userInfo.nspOtr,
-          tuitionAndAdminFeePaid: userInfo.tuitionAndAdminFeePaid,
-          miscFeePaid: userInfo.miscFeePaid,
-          currentSchoolName: userInfo.currentSchoolName,
-        });
-      } else {
-        row = userRows[0];
-        row.fatherName = userInfo.fatherName;
-        row.gender = userInfo.gender;
-        row.caste = userInfo.caste;
-        row.annualIncome = userInfo.annualIncome;
-        row.class = userInfo.class;
-        row.aadhaar = userInfo?.aadhaar?.toString();
-        row.studentType = userInfo?.studentType;
-        row.previousYearMarks = userInfo?.previousYearMarks?.toString();
-        row.dob = userInfo?.dob?.toString();
-        row.state = userInfo.state;
-        row.udid = userInfo?.udid?.toString();
-        row.disabilityType = userInfo.disabilityType;
-        row.disabilityRange = userInfo.disabilityRange;
-        row.bankAccountHolderName = userInfo.bankAccountHolderName;
-        row.bankAccountNumber = userInfo.bankAccountNumber;
-        row.bankIfscCode = userInfo.bankIfscCode;
-        row.bankName = userInfo.bankName;
-        row.bankAddress = userInfo.bankAddress;
-        row.branchCode = userInfo.branchCode;
-        row.nspOtr = userInfo.nspOtr;
-        row.tuitionAndAdminFeePaid = userInfo.tuitionAndAdminFeePaid;
-        row.miscFeePaid = userInfo.miscFeePaid;
-        row.currentSchoolName = userInfo.currentSchoolName;
-      }
-      await queryRunner.manager.save(row);
-      await queryRunner.commitTransaction();
-      return row;
-    } catch (err) {
-      await queryRunner.rollbackTransaction();
-      throw err;
-    } finally {
-      await queryRunner.release();
-    }
-  }
+      // let row: UserInfo;
+      // ///update added filleds
+      // if (userRows.length === 0) {
+      //   row = this.userInfoRepository.create({
+      //     user_id: user.user_id,
+  //         fatherName: userInfo.fatherName,
+  //         gender: userInfo.gender,
+  //         caste: userInfo.caste,
+  //         annualIncome: userInfo.annualIncome,
+  //         class: userInfo.class,
+  //         aadhaar: userInfo?.aadhaar?.toString(),
+  //         studentType: userInfo.studentType,
+  //         previousYearMarks: userInfo?.previousYearMarks?.toString(),
+  //         dob: userInfo?.dob?.toString(),
+  //         state: userInfo.state,
+  //         udid: userInfo?.udid?.toString(),
+  //         disabilityType: userInfo.disabilityType,
+  //         disabilityRange: userInfo.disabilityRange,
+  //         bankAccountHolderName: userInfo.bankAccountHolderName,
+  //         bankAccountNumber: userInfo.bankAccountNumber,
+  //         bankIfscCode: userInfo.bankIfscCode,
+  //         bankName: userInfo.bankName,
+  //         bankAddress: userInfo.bankAddress,
+  //         branchCode: userInfo.branchCode,
+  //         nspOtr: userInfo.nspOtr,
+  //         tuitionAndAdminFeePaid: userInfo.tuitionAndAdminFeePaid,
+  //         miscFeePaid: userInfo.miscFeePaid,
+  //         currentSchoolName: userInfo.currentSchoolName,
+  //       });
+  //     } else {
+  //       row = userRows[0];
+  //       row.fatherName = userInfo.fatherName;
+  //       row.gender = userInfo.gender;
+  //       row.caste = userInfo.caste;
+  //       row.annualIncome = userInfo.annualIncome;
+  //       row.class = userInfo.class;
+  //       row.aadhaar = userInfo?.aadhaar?.toString();
+  //       row.studentType = userInfo?.studentType;
+  //       row.previousYearMarks = userInfo?.previousYearMarks?.toString();
+  //       row.dob = userInfo?.dob?.toString();
+  //       row.state = userInfo.state;
+  //       row.udid = userInfo?.udid?.toString();
+  //       row.disabilityType = userInfo.disabilityType;
+  //       row.disabilityRange = userInfo.disabilityRange;
+  //       row.bankAccountHolderName = userInfo.bankAccountHolderName;
+  //       row.bankAccountNumber = userInfo.bankAccountNumber;
+  //       row.bankIfscCode = userInfo.bankIfscCode;
+  //       row.bankName = userInfo.bankName;
+  //       row.bankAddress = userInfo.bankAddress;
+  //       row.branchCode = userInfo.branchCode;
+  //       row.nspOtr = userInfo.nspOtr;
+  //       row.tuitionAndAdminFeePaid = userInfo.tuitionAndAdminFeePaid;
+  //       row.miscFeePaid = userInfo.miscFeePaid;
+  //       row.currentSchoolName = userInfo.currentSchoolName;
+  //     }
+  //     await queryRunner.manager.save(row);
+  //     await queryRunner.commitTransaction();
+  //     return row;
+  //   } catch (err) {
+  //     await queryRunner.rollbackTransaction();
+  //     throw err;
+  //   } finally {
+  //     await queryRunner.release();
+  //   }
+  // }
 
   // Update values in database based on built profile
   async updateDatabase(profile: any, validationData: any, user: any , adminResultData: any) {
@@ -449,7 +449,7 @@ export default class ProfilePopulator {
     user.fieldsVerifiedAt = new Date();
     user.fieldsVerificationData = validationData;
 
-    await this.handleUserInfo(user, userInfo);
+    // await this.handleUserInfo(user, userInfo);
 
     const queryRunner =
       this.usersXrefRepository.manager.connection.createQueryRunner();
